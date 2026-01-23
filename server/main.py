@@ -10,7 +10,7 @@ import chat_server as cht
 
 # Server Socket Settings
 
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 PORT = 65432
 
 # Socket Opening
@@ -29,5 +29,8 @@ if __name__ == '__main__':
 
             conn, addr = s.accept()
 
-            t = thr.Thread(target=cht.client_handle, args=(conn, addr))
-            t.start()
+            thr.Thread(
+                target=cht.handle_client,
+                args=(conn, addr),
+                daemon=True
+            ).start()
