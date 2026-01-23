@@ -3,5 +3,6 @@
 - Navoni
 - Dilecce
 - Khabir
-- solitro
+- Solitro
 - Brambilla
+
