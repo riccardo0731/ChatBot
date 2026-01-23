@@ -33,7 +33,7 @@ def ricevi_messaggi(sock):
             break
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    print(standard)
+    
     s.connect((HOST, PORT))
     
     threading.Thread(target=ricevi_messaggi, args=(s,), daemon=True).start()
@@ -55,4 +55,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         except KeyboardInterrupt:
             print("\n\033[93mChiusura forzata...\033[0m")
             s.close()
+
             sys.exit()
