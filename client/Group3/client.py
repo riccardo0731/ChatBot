@@ -1,43 +1,75 @@
-# Import socket library
+import sys
+import os
+
+# sys import to find utils
+current_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir = os.path.abspath(os.path.join(current_dir, '..', '..'))
+sys.path.append(root_dir)
+
 import socket as sck
-import json 
 import threading as thr
- 
-def receive(sock):
+import utils 
+
+def receive_messages(sock):
+    """Listen for incoming messages."""
     while True:
         try:
             data = sock.recv(1024)
             if not data:
+                print("\n[!] Disconnected from server.")
                 break
-            msg = json.loads(data.decode())
-            print(f"\n{msg['from']}: {msg['msg']}")
-        except:
+            
+            msg = utils.decode_json_msg(data)
+            if msg:
+                # Pretty print msg
+                sender = msg['from']['name']
+                text = msg['msg']
+                print(f"\n >>> {sender}: {text}")
+                print("To: ", end="", flush=True)
+        except Exception as e:
+            print(f"\n[!] Receive Error: {e}")
             break
+    sys.exit()
 
-def send(sock, name):
-    while True:
-        to = input("To: ")
-        text = input("Msg: ")
-
-        msg = {
-            "from": name,
-            "to": to,
-            "msg": text
-        }
-        sock.send(json.dumps(msg).encode())
-
-
-# Server connection settings
-HOST = "127.0.0.1"
-PORT = 65432
-
-if __name__ == "__main__":
-
-    name = input("Username: ")
+def start_client():
+    my_ip = utils.get_local_ip()
+    
+    # Connection
+    server_host = input("Insert Server IP (press send for localhost): ").strip() or "127.0.0.1"
+    my_name = input("Your Username: ").strip()
 
     sock = sck.socket(sck.AF_INET, sck.SOCK_STREAM)
-    sock.connect((HOST, PORT))
-    sock.send(name.encode())
+    
+    try:
+        sock.connect((server_host, utils.PORT))
+    except ConnectionRefusedError:
+        print("[!] Impossible to connect to server. Check connectivity.")
+        return
 
-    thr.Thread(target=receive, args=(sock,), daemon=True).start()
-    send(sock, name)
+    # 1. Send name for registration
+    sock.send(my_name.encode(utils.ENCODING))
+
+    # Start Receiver Thread
+    thr.Thread(target=receive_messages, args=(sock,), daemon=True).start()
+
+    print(f"--- Connected as {my_name} ({my_ip}) ---")
+    print("Message format -> Receiver, send, message.")
+
+    # Sending Loop
+    try:
+        while True:
+            to_user = input("To: ")
+            text = input("Msg: ")
+
+            # Utility function to create the json
+            json_packet = utils.create_json_msg(my_name, my_ip, to_user, text)
+            
+            sock.send(json_packet.encode(utils.ENCODING))
+            
+    except KeyboardInterrupt:
+        print("\nExiting...")
+    finally:
+        sock.close()
+
+if __name__ == "__main__":
+    start_client()

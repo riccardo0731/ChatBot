@@ -1,62 +1,60 @@
-import json
 import socket as sck
 import threading as thr
+import utils
 
-### CHAT SERVER FUNCTIONS ###
-
-msg_standard = {
-                "from": {
-                	   "name": "YourName",
-                         "ip":   "YourIp",
-                	},
-
-                "to":   "IpToSendMsgTo",
-                "msg":  "YourMsg"
-            }
-
-# Standard Port
-PORT = 65432
-
+# Data structure for connected clients: { "Username": socket_object }
 clients = {}
 lock = thr.Lock()
 
+def broadcast(msg_dict, sender_socket):
+    """Optional: Send to everyone"""
+    pass 
 
-
-def client_handle(conn, addr):
-
+def handle_client(conn, addr):
+    """Handle single client connection."""
+    name = None
     try:
-        name = conn.recv(1024).decode()
-
+        # 1. First Handshake: receive username
+        name = conn.recv(1024).decode(utils.ENCODING).strip()
+        
         with lock:
             clients[name] = conn
         
-        print(f"{name} connected from {addr}")
-
+        print(f"[NUOVA CONNESSIONE] {name} connesso da {addr[0]}")
+        
+        # Message listening loop
         while True:
             data = conn.recv(1024)
             if not data:
                 break
-        
-            msg = json.loads(data.decode())
-            dest = msg['to']
+            
+            # Decode using the standard
+            msg_obj = utils.decode_json_msg(data)
+            
+            if msg_obj:
+                # Server side logging
+                print(f"[MSG] Da: {msg_obj['from']['name']} -> A: {msg_obj['to']}")
+                
+                dest_name = msg_obj['to']
+                
+                # Message routing
+                with lock:
+                    if dest_name in clients:
+                        dest_conn = clients[dest_name]
+                        # Send JSON message
+                        dest_conn.send(data)
+                    else:
+                        # Tell the sender that the user doesnt exist
+                        error_msg = utils.create_json_msg("SERVER", "0.0.0.0", name, f"User {dest_name} not found.")
+                        conn.send(error_msg.encode(utils.ENCODING))
 
-            with lock:
-                if dest in clients:
-                    clients[dest].send(json.dumps(msg).encode())
-
+    except Exception as e:
+        print(f"[ERRORE] {e}")
     finally:
-        with lock:
-            clients.pop(name, None)
+        # Clean when the client disconnects
+        if name:
+            print(f"[DISCONNESSIONE] {name} uscito.")
+            with lock:
+                if name in clients:
+                    del clients[name]
         conn.close()
-        print(f"{name} disconnected")
-
-
-
-def check_standard_endpoint(msg: dict):
-    if(msg['msg'] == '/standard'):
-        return True
-    else:
-        return False
-
-
-
