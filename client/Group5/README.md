@@ -1,6 +1,7 @@
 # Authors
-
-- Cocola
-- Rucsandra
 - Ponsini
 - Urban
+- Cocola
+- GinGinGin Dinescu
+- Chiara
+
