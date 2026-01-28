@@ -1,6 +1,9 @@
 # Distributed Chat System - Class Chat Project
 
-![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Sockets](https://img.shields.io/badge/Sockets-UDP%2FTCP-red?style=for-the-badge)
+![Threading](https://img.shields.io/badge/Multithreading-Active-blueviolet?style=for-the-badge)
+![Platform](https://img.shields.io/badge/Platform-Cross--Platform-lightgrey?style=for-the-badge)
 
 ## 1. Project Overview
 Welcome to the official repository for the **Distributed Class Chat System**. This project implements a centralized Client-Server architecture designed to facilitate real-time messaging between multiple independent client implementations.
