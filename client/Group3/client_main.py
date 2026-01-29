@@ -12,6 +12,7 @@ import socket as sck
 import threading as thr
 import utils 
 import client_lib 
+import time
 
 def start_client():
     my_ip = utils.get_local_ip()
@@ -44,6 +45,9 @@ def start_client():
 
     print(f"--- Connected as {my_name} ({my_ip}) ---")
     print("Message format -> Receiver, enter, message.")
+
+    # Little sleep to avaoid TCP Coalescing
+    time.sleep(0.1)
 
     # Get commands list from server to show at the start to the user
     to_user = "/help"

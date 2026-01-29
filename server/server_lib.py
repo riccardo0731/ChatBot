@@ -193,7 +193,15 @@ def handle_client(conn, addr):
     name = None
     try:
         # 1. Handshake: Receive name
-        raw_name = conn.recv(1024).decode(utils.ENCODING).strip()
+        raw_data = conn.recv(1024).decode(utils.ENCODING)
+        
+        # If help message and name are sent together because of the TCP Coalescing, then we just take the name
+        if '{' in raw_data:
+            raw_name = raw_data.split('{')[0]
+        else:
+            raw_name = raw_data
+            
+        raw_name = raw_name.strip()
         
         # Check uniqueness
         with lock:
@@ -215,7 +223,7 @@ def handle_client(conn, addr):
         with lock:
             other_users = [u for u in clients if u != name]
         
-        welcome_text = f"Welcome {name}! Connection established."
+        welcome_text = f"Welcome {name}! Connection established.\nSend message to /help for a list of available commands!"
         if other_users:
             welcome_text += f"\nOnline users: {', '.join(other_users)}"
         else:
