@@ -1,15 +1,15 @@
 import json
 import socket
 
-# Configurazione Standard
+# Standard Configuration
 PORT = 65432
-# Usiamo UTF-8 per supportare emoji e caratteri speciali 😎
+# Using UTF-8 to even support emoji and special characters
 ENCODING = 'utf-8' 
 
 def get_local_ip():
-    """Trova l'indirizzo IP della macchina locale."""
+    """ Find Local Machine IP Address """
     try:
-        # Trucchetto per trovare l'IP effettivo usato per uscire verso internet
+        # Get effective IP
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         ip = s.getsockname()[0]
@@ -20,7 +20,7 @@ def get_local_ip():
 
 def create_json_msg(sender_name, sender_ip, target, text):
     """
-    Crea il dizionario secondo il tuo standard rigoroso:
+    Create dictionary folllowing the standard:
     {
       "from": { "name": "...", "ip": "..." },
       "to": "...",
@@ -37,8 +37,18 @@ def create_json_msg(sender_name, sender_ip, target, text):
     })
 
 def decode_json_msg(bytes_data):
-    """Trasforma i byte ricevuti in dizionario Python."""
+    """Transform the received bytes into a Python dictionary"""
     try:
         return json.loads(bytes_data.decode(ENCODING))
     except json.JSONDecodeError:
         return None
+    
+def get_standard_json():
+    """Return the standard JSON as a string(for debugging)"""
+    return """
+    {
+      "from": { "name": "...", "ip": "..." },
+      "to": "...",
+      "msg": "..."
+    }
+    """
