@@ -39,7 +39,10 @@ def handle_client(conn, addr):
                 
                 # Message routing
                 with lock:
-                    if dest_name in clients:
+                    # Check for /standard endpoint
+                    if dest_name == '/standard':
+                        conn.send(utils.create_json_msg("SERVER", "0.0.0.0", name, utils.get_standard_json).encode(utils.ENCODING))
+                    elif dest_name in clients:
                         dest_conn = clients[dest_name]
                         # Send JSON message
                         dest_conn.send(data)

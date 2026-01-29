@@ -42,3 +42,15 @@ def decode_json_msg(bytes_data):
         return json.loads(bytes_data.decode(ENCODING))
     except json.JSONDecodeError:
         return None
+    
+def get_standard_json():
+    standard = """{
+        "from": {
+            "name": "Sender Username",
+            "ip": "Sender IP"
+        },
+        "to": "Receiver Username",
+        "msg": "Message Txt"
+    }"""
+
+    return standard
