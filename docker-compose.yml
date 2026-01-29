@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  chat-server:
+    # Build the image using the Dockerfile in the current context (root)
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    
+    # Assign a custom name to the container for easy identification
+    container_name: group3_server
+    
+    # Map host port 65432 to container port 65432
+    # Format: "HOST_PORT:CONTAINER_PORT"
+    ports:
+      - "65432:65432"
+    
+    # Restart policy: The container will restart automatically unless stopped manually
+    restart: unless-stopped
+    
+    # Resource limits (Optional: simulates a constrained production environment)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M

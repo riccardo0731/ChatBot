@@ -1,0 +1,20 @@
+# Exclude client implementations to keep the server image small
+client/
+
+# Exclude Version Control System files
+.git
+.gitignore
+
+# Exclude IDE configurations
+.vscode
+.idea
+
+# Exclude Python cache and compiled files
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Exclude local virtual environments
+venv/
+env/
