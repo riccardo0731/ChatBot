@@ -20,7 +20,7 @@ def handle_client(conn, addr):
         with lock:
             clients[name] = conn
         
-        print(f"[NUOVA CONNESSIONE] {name} connesso da {addr[0]}")
+        print(f"[NEW CONNECTION] {name} connected from {addr[0]}")
         
         # Message listening loop
         while True:
@@ -33,7 +33,7 @@ def handle_client(conn, addr):
             
             if msg_obj:
                 # Server side logging
-                print(f"[MSG] Da: {msg_obj['from']['name']} -> A: {msg_obj['to']}")
+                print(f"[MSG] From: {msg_obj['from']['name']} -> To: {msg_obj['to']}")
                 
                 dest_name = msg_obj['to']
                 
@@ -49,11 +49,11 @@ def handle_client(conn, addr):
                         conn.send(error_msg.encode(utils.ENCODING))
 
     except Exception as e:
-        print(f"[ERRORE] {e}")
+        print(f"[ERROR] {e}")
     finally:
         # Clean when the client disconnects
         if name:
-            print(f"[DISCONNESSIONE] {name} uscito.")
+            print(f"[DISCONNECTING] {name} exited.")
             with lock:
                 if name in clients:
                     del clients[name]
