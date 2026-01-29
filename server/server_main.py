@@ -1,15 +1,17 @@
 import sys
 import os
 
-# sys directory to import utils
+# 1. Retrieve the current directory path
 current_dir = os.path.dirname(os.path.abspath(__file__))
+# 2. Navigate one level up to locate the project root directory
 parent_dir = os.path.abspath(os.path.join(current_dir, '..'))
+# 3. Append the root directory to the system path to resolve shared modules
 sys.path.append(parent_dir)
 
 import socket as sck
 import threading as thr
 import utils
-import chat_server as cht 
+import server.server_lib as cht 
 
 HOST = "0.0.0.0"
 
