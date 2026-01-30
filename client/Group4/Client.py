@@ -47,40 +47,40 @@ def ricevi_messaggi(sock):
                 if isinstance(mittente_info, dict):
                     mittente = mittente_info.get("name", "Sconosciuto")
                 else:
-                    mittente = str(mittente_info) # Fallback se il formato cambia
+                    mittente = str(mittente_info) # Fallback 
                 
                 messaggio = data.get("msg", "")
                 destinatario = data.get("to", "")
 
                 # --- FORMATTAZIONE ESTETICA ---
                 
-                # 1. Cancelliamo la riga attuale di input per non fare pasticci
+          
                 sys.stdout.write("\r" + " " * 50 + "\r")
 
-                # 2. Logica di visualizzazione basata sul mittente
+              
                 if mittente == "SERVER":
-                    # Messaggi di sistema
+                   
                     print(f"{Style.YELLOW}  [SERVER] {messaggio}{Style.RESET}")
                 
                 elif mittente == name:
-                    # Conferme dei propri messaggi (opzionale, se il server le rimanda)
+                   
                     print(f"{Style.GREEN}✓  [Tu]: {messaggio}{Style.RESET}")
                     
                 else:
-                    # Messaggi dagli altri utenti
+                  
                     if destinatario == "Everyone" or destinatario == "/shout":
-                        # Messaggio pubblico
+
                         print(f"{Style.CYAN} [{timestamp()}] {Style.BOLD}{mittente}{Style.RESET}: {messaggio}")
                     else:
-                        # Messaggio privato o risposta comando
+                
                         print(f"{Style.BLUE} [{timestamp()}] {Style.BOLD}{mittente}{Style.RESET} (privato): {messaggio}")
 
-                # 3. Ristampiamo il prompt per far capire all'utente che può scrivere
+               
                 sys.stdout.write(f"{Style.GREEN}[Tu] > {Style.RESET}")
                 sys.stdout.flush()
 
             except json.JSONDecodeError:
-                # Fallback per messaggi non JSON (errori grezzi)
+               
                 print(f"\r{Style.RED}  RAW: {raw_data}{Style.RESET}")
                 sys.stdout.write(f"{Style.GREEN}[Tu] > {Style.RESET}")
                 sys.stdout.flush()
@@ -102,7 +102,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print(f" Connessione al server {HOST}:{PORT}...")
         s.connect((HOST, PORT))
         
-        # --- HANDSHAKE INIZIALE ---
+
         s.sendall(name.encode()) 
         print(f"{Style.GREEN} Connesso! Sei online come '{name}'.{Style.RESET}")
         print(f"{Style.YELLOW} Suggerimento: Scrivi /help per i comandi.{Style.RESET}\n")
@@ -111,11 +111,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print(f"{Style.RED} Errore: Il server sembra spento.{Style.RESET}")
         sys.exit()
 
-    # Avvio Thread Ricezione
+
     t = threading.Thread(target=ricevi_messaggi, args=(s,), daemon=True)
     t.start()
 
-    # Prompt iniziale
     sys.stdout.write(f"{Style.GREEN}[Tu] > {Style.RESET}")
     sys.stdout.flush()
 
@@ -124,13 +123,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             # Input utente
             testo = input()
             
-            # Ripuliamo la riga appena scritta dall'utente per evitare duplicati visivi
-            # (Il cursore sale di una riga e la cancella)
+           
             sys.stdout.write("\033[F\033[K") 
             
-            # Ristampiamo il messaggio dell'utente subito (feedback istantaneo)
+           
             print(f"{Style.GREEN}✓  [Tu]: {testo}{Style.RESET}")
-            # Rimettiamo il prompt per il prossimo messaggio
+            
             sys.stdout.write(f"{Style.GREEN}[Tu] > {Style.RESET}")
             sys.stdout.flush()
 
@@ -143,8 +141,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             # Altrimenti default è "/shout".
             
             if testo.startswith('/'):
-                destinazione = testo.split(" ")[0] # Prende '/help' o '/list'
-                contenuto = testo # Manda tutto il comando
+                destinazione = testo.split(" ")[0]
+                contenuto = testo 
             else:
                 destinazione = "/shout"
                 contenuto = testo
@@ -166,3 +164,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     s.close()
     print(f"{Style.HEADER} Alla prossima!{Style.RESET}")
+
